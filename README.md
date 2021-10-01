@@ -1,4 +1,5 @@
 # Credit-Card-Fraud-Detection-Multiple-Techniques
 
-Arance Kurmi
-213050056
+Collaborators:
+Anuj Namdeo Fulari 213050049
+Arance Kurmi 213050056
