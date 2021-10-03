@@ -62,7 +62,7 @@ if __name__ == '__main__':
     
     X,y = read_dataset('creditcard.csv')
     
-    checkpoint_path = "chekpoints/cp-{epoch:04d}.ckpt"
+    checkpoint_path = "checkpoints/cp-{epoch:04d}.ckpt"
     checkpoint_dir = os.path.dirname(checkpoint_path)
     
     model = NeuralNetwork(X, y, random_state=101)
