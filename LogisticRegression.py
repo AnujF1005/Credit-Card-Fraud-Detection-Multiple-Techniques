@@ -20,15 +20,13 @@ def model_evaluation(Y_test,Y_pred):
 
 
 df=pd.read_csv("creditcard.csv")
-data_features = df.iloc[:, 1:30]
+data_features = df.iloc[:, 0:30]
 data_targets = df.iloc[:, 30:]
+data_features['scaled_amount'] = RobustScaler().fit_transform(data_features['Amount'].values.reshape(-1,1))
+data_features['scaled_time'] = RobustScaler().fit_transform(data_features['Time'].values.reshape(-1,1))
+data_features_scaled = data_features.drop(['Time','Amount'],axis = 1,inplace=False)
 oversample = RandomOverSampler(sampling_strategy='minority')
-X_over, y_over = oversample.fit_resample(data_features, data_targets)
-
-# data_features['scaled_amount'] = RobustScaler().fit_transform(data_features['Amount'].values.reshape(-1,1))
-# data_features['scaled_time'] = RobustScaler().fit_transform(data_features['Time'].values.reshape(-1,1))
-# data_features_scaled = data_features.drop(['Time','Amount'],axis = 1,inplace=False)
-
+X_over, y_over = oversample.fit_resample(data_features_scaled, data_targets)
 
 
 np.random.seed(42)
