@@ -8,8 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix,accuracy_score,classification_report
 import scikitplot as skplt
 from sklearn.preprocessing import StandardScaler, RobustScaler
-
-
+from imblearn.over_sampling import RandomOverSampler
 
 def model_evaluation(Y_test,Y_pred):
 	print(classification_report(Y_test,Y_pred))
@@ -23,6 +22,8 @@ def model_evaluation(Y_test,Y_pred):
 df=pd.read_csv("creditcard.csv")
 data_features = df.iloc[:, 1:30]
 data_targets = df.iloc[:, 30:]
+oversample = RandomOverSampler(sampling_strategy='minority')
+X_over, y_over = oversample.fit_resample(data_features, data_targets)
 
 # data_features['scaled_amount'] = RobustScaler().fit_transform(data_features['Amount'].values.reshape(-1,1))
 # data_features['scaled_time'] = RobustScaler().fit_transform(data_features['Time'].values.reshape(-1,1))
@@ -31,7 +32,7 @@ data_targets = df.iloc[:, 30:]
 
 
 np.random.seed(42)
-X_train, X_test, Y_train, Y_test = train_test_split(data_features, data_targets,train_size = 0.70, test_size = 0.30, random_state = 1)
+X_train, X_test, Y_train, Y_test = train_test_split(X_over, y_over,train_size = 0.70, test_size = 0.30, random_state = 1)
 lr = LogisticRegression(penalty="l2", C=5)
 lr.fit(X_train,Y_train.values.ravel())
 Y_pred=lr.predict(X_test)
