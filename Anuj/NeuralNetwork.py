@@ -4,15 +4,20 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import seaborn as sns
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report
 import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.pipeline import Pipeline
 
 class NeuralNetwork:
-    def __init__(self, X, y, test_size=0.2, random_state=0):
+    def __init__(self, X, y):
     
-        self.train_X, self.test_X, self.train_y, self.test_y = train_test_split(X, y, test_size = test_size, random_state=random_state)
+        self.train_X, self.test_X = X[0], X[1]
+        self.train_y, self.test_y = y[0], y[1]
         
         self.model = Sequential()
         self.model.add(Input(shape=(self.train_X.shape[1],)))
@@ -44,28 +49,69 @@ class NeuralNetwork:
         
         y_pred = self.model.predict(self.test_X)
         y_pred = y_pred >= 0.5
+        
+        print()
+        print("Classification Report:")
+        print(classification_report(self.test_y, y_pred))
+        
         cf_matrix = confusion_matrix(self.test_y, y_pred)
+        
+        print()
+        print("Confusion Matrix:")
+        print(cf_matrix)
+        
         sns.heatmap(cf_matrix, annot=True)
         
         plt.show()
         
-def read_dataset(csv_file_path):
+def read_dataset(csv_file_path, test_size=0.2, random_state=0):
     df = pd.read_csv(csv_file_path)
     df = df.drop(['Amount','Time'], axis=1)
     
     y = df['Class']
     X = df.drop(['Class'], axis=1)
     
-    return X,y
+    #Resampling
+    over = SMOTE(sampling_strategy=0.05)
+    under = RandomUnderSampler(sampling_strategy=0.25)
+    steps = [('o', over), ('u', under)]
+    pipeline = Pipeline(steps=steps)
+    X,y = pipeline.fit_resample(X,y)
+    
+    train_X, test_X, train_y, test_y = train_test_split(X, y, test_size = test_size, random_state=random_state)
+    
+    #MinMax scaling
+    scaler = MinMaxScaler()
+    train_X = scaler.fit_transform(train_X)
+    test_X = scaler.transform(test_X)
+    
+    return [train_X, test_X], [train_y, test_y]
+    
+def summary(X,y):
+    train_X, test_X = X[0], X[1]
+    train_y, test_y = y[0], y[1]
+    
+    print()
+    print("---------Dataset Summary----------")
+    print("Total training samples:", len(train_X))
+    print("Total training samples corresponding to class 0:", len(train_y[train_y[:]==0]))
+    print("Total training samples corresponding to class 1:", len(train_y[train_y[:]==1]))
+    print()
+    print("Total testing samples:", len(test_X))
+    print("Total testing samples corresponding to class 0:", len(test_y[test_y[:]==0]))
+    print("Total testing samples corresponding to class 1:", len(test_y[test_y[:]==1]))
+    print("----------------------------------")
+    print()
     
 if __name__ == '__main__':
     
     X,y = read_dataset('creditcard.csv')
+    summary(X,y)
     
     checkpoint_path = "checkpoints/cp-{epoch:04d}.ckpt"
     checkpoint_dir = os.path.dirname(checkpoint_path)
     
-    model = NeuralNetwork(X, y, random_state=101)
-    #model.train(batch_size=16, epochs=2, checkpoint_path=checkpoint_path)
+    model = NeuralNetwork(X, y)
+    #model.train(batch_size=16, epochs=4, checkpoint_path=checkpoint_path)
     model.load(checkpoint_dir)
     model.evaluate()
