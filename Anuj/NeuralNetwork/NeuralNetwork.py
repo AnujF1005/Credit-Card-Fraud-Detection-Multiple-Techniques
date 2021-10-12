@@ -6,12 +6,18 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, classification_report
 import tensorflow as tf
-import os
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
+
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+from utils import dataset_summary
 
 class NeuralNetwork:
     def __init__(self, X, y):
@@ -87,26 +93,10 @@ def read_dataset(csv_file_path, test_size=0.2, random_state=0):
     
     return [train_X, test_X], [train_y, test_y]
     
-def summary(X,y):
-    train_X, test_X = X[0], X[1]
-    train_y, test_y = y[0], y[1]
-    
-    print()
-    print("---------Dataset Summary----------")
-    print("Total training samples:", len(train_X))
-    print("Total training samples corresponding to class 0:", len(train_y[train_y[:]==0]))
-    print("Total training samples corresponding to class 1:", len(train_y[train_y[:]==1]))
-    print()
-    print("Total testing samples:", len(test_X))
-    print("Total testing samples corresponding to class 0:", len(test_y[test_y[:]==0]))
-    print("Total testing samples corresponding to class 1:", len(test_y[test_y[:]==1]))
-    print("----------------------------------")
-    print()
-    
 if __name__ == '__main__':
     
     X,y = read_dataset('../creditcard.csv')
-    summary(X,y)
+    dataset_summary(X,y)
     
     checkpoint_path = "checkpoints/cp-{epoch:04d}.ckpt"
     checkpoint_dir = os.path.dirname(checkpoint_path)
