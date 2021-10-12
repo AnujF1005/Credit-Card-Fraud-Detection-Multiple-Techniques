@@ -105,7 +105,7 @@ def summary(X,y):
     
 if __name__ == '__main__':
     
-    X,y = read_dataset('creditcard.csv')
+    X,y = read_dataset('../creditcard.csv')
     summary(X,y)
     
     checkpoint_path = "checkpoints/cp-{epoch:04d}.ckpt"
