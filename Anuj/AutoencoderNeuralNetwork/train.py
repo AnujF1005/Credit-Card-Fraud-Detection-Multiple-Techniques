@@ -4,6 +4,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 from autoencoder import Autoencoder
+from classifier import Classifier
 from utils import dataset_summary
 import pandas as pd
 import numpy as np
@@ -39,13 +40,28 @@ if __name__ == '__main__':
     X,y = read_dataset('../creditcard.csv')
     dataset_summary(X,y)
     
-    train_X = X[0]
+    train_X, test_X = X
+    train_y, test_y = y
+    
     aenc = Autoencoder()
     noised_X = aenc.add_gausian_noise(train_X)
     
     autoencoder_checkpoint_path = "autoencoder_checkpoints/cp-{epoch:04d}.ckpt"
     autoencoder_checkpoint_dir = os.path.dirname(autoencoder_checkpoint_path)
     
-    aenc.train(train_X, noised_X, batch_size=64, epochs=2, checkpoint_path=autoencoder_checkpoint_path)
+    #aenc.train(train_X, noised_X, batch_size=64, epochs=2, checkpoint_path=autoencoder_checkpoint_path)
+    aenc.load(autoencoder_checkpoint_dir)
+    
+    train_X = aenc.predict(noised_X)
+    test_X = aenc.predict(test_X)
+    
+    classifier_checkpoint_path = "classifier_checkpoints/cp-{epoch:04d}.ckpt"
+    classifier_checkpoint_dir = os.path.dirname(classifier_checkpoint_path)
+    
+    clf = Classifier()
+    clf.train(train_X, train_y, batch_size=64, epochs=2, checkpoint_path=classifier_checkpoint_path)
+    #clf.load(classifier_checkpoint_dir)
+    clf.evaluate(test_X, test_y)
+    
     
     
