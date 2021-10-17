@@ -18,6 +18,7 @@ class Autoencoder():
             reconstruction_error = tf.reduce_mean(0.5 * tf.square(tf.subtract(pred, orig)))
             return reconstruction_error
         
+        self.loss_function = lf
         self.model.compile(optimizer='adam', loss = lf, metrics=['accuracy'])
         
     def summary(self):
@@ -35,7 +36,7 @@ class Autoencoder():
     def predict(self, X):
         return self.model.predict(X)
         
-    def add_gausian_noise(self, X):
-        noise = np.random.normal(0,0.1,X.shape)
+    def add_gausian_noise(self, X, mean, std):
+        noise = np.random.normal(mean,std,X.shape)
         new_X = X + noise
         return new_X        

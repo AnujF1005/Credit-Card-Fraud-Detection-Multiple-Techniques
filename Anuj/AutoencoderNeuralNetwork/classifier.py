@@ -17,18 +17,18 @@ class Classifier():
         self.model.add(Dense(5, activation='relu'))
         self.model.add(Dense(1, activation='sigmoid'))
         
-        self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy',tf.keras.metrics.Precision(),tf.keras.metrics.Recall()])
         
     def summary(self):
         print(self.model.summary())
     
-    def train(self, X, y, batch_size, epochs, checkpoint_path):
+    def train(self, X, y, val_data, batch_size, epochs, checkpoint_path):
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, verbose=1, save_weights_only=True, save_freq='epoch')
         
         log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         
-        self.model.fit(X,y,batch_size=batch_size, epochs=epochs, callbacks=[cp_callback, tensorboard_callback])
+        self.model.fit(X,y,batch_size=batch_size, epochs=epochs, validation_data=val_data, callbacks=[cp_callback, tensorboard_callback])
         
     def load(self, chk_dir):   
         weights = tf.train.latest_checkpoint(chk_dir)
@@ -38,9 +38,11 @@ class Classifier():
         return self.model.predict(X)
         
     def evaluate(self, X, y):
-        loss, accuracy = self.model.evaluate(X, y)
+        loss, accuracy, precision, recall = self.model.evaluate(X, y)
         print('Loss:', loss)
         print('Accuracy:', accuracy)
+        print('Precision:', precision)
+        print('Recall:', recall)
         
         y_pred = self.model.predict(X)
         y_pred = y_pred >= 0.5
