@@ -33,6 +33,7 @@ def read_dataset(csv_file_path, test_size=0.2, random_state=0):
     pipeline = Pipeline(steps=steps)
     train_X,train_y = pipeline.fit_resample(train_X,train_y)
     
+    
     return [train_X, test_X], [train_y, test_y]
     
 if __name__ == '__main__':
@@ -44,15 +45,17 @@ if __name__ == '__main__':
     train_y, test_y = y
     
     aenc = Autoencoder()
-    noised_X = aenc.add_gausian_noise(train_X, mean=0, std=0.01)
+    noised_X = aenc.add_gausian_noise(train_X, mean=0, std=0.1)
     
     autoencoder_checkpoint_path = "autoencoder_checkpoints/cp-{epoch:04d}.ckpt"
     autoencoder_checkpoint_dir = os.path.dirname(autoencoder_checkpoint_path)
     
-    aenc.train(noised_X, train_X, batch_size=64, epochs=2, checkpoint_path=autoencoder_checkpoint_path)
+    aenc.train(noised_X, train_X, batch_size=1, epochs=5, checkpoint_path=autoencoder_checkpoint_path)
+    aenc.load(autoencoder_checkpoint_dir)
     print(aenc.loss_function(aenc.predict(aenc.add_gausian_noise(test_X, mean=0, std=0.01)), test_X))
-    #aenc.load(autoencoder_checkpoint_dir)
     
+    
+    test_X = aenc.add_gausian_noise(test_X, mean=0, std=0.1)
     train_X = aenc.predict(noised_X)
     test_X = aenc.predict(test_X)
     
@@ -61,7 +64,7 @@ if __name__ == '__main__':
     
     clf = Classifier()
     clf.train(train_X, train_y, val_data=(test_X, test_y), batch_size=32, epochs=10, checkpoint_path=classifier_checkpoint_path)
-    #clf.load(classifier_checkpoint_dir)
+    clf.load(classifier_checkpoint_dir)
     clf.evaluate(test_X, test_y)
     
 

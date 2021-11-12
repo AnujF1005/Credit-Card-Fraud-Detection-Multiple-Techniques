@@ -10,6 +10,8 @@ class Autoencoder():
         self.model.add(Dense(22, activation='relu'))
         self.model.add(Dense(15, activation='relu'))
         self.model.add(Dense(10, activation='relu'))
+        self.model.add(Dense(5, activation='relu'))
+        self.model.add(Dense(10, activation='relu'))
         self.model.add(Dense(15, activation='relu'))
         self.model.add(Dense(22, activation='relu'))
         self.model.add(Dense(29, activation='relu'))
@@ -19,7 +21,7 @@ class Autoencoder():
             return reconstruction_error
         
         self.loss_function = lf
-        self.model.compile(optimizer='adam', loss = lf, metrics=['accuracy'])
+        self.model.compile(optimizer='adam', loss = tf.keras.losses.MeanSquaredError(), metrics=['accuracy'])
         
     def summary(self):
         print(self.model.summary())
