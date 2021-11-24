@@ -10,8 +10,6 @@ class Autoencoder():
         self.model.add(Dense(22, activation='relu'))
         self.model.add(Dense(15, activation='relu'))
         self.model.add(Dense(10, activation='relu'))
-        self.model.add(Dense(5, activation='relu'))
-        self.model.add(Dense(10, activation='relu'))
         self.model.add(Dense(15, activation='relu'))
         self.model.add(Dense(22, activation='relu'))
         self.model.add(Dense(29, activation='relu'))
