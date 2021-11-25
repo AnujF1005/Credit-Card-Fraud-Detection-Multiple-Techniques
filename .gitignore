@@ -1,6 +1,7 @@
-Anuj/__pycache__/
-Anuj/creditcard.csv
-Anuj/NeuralNetwork/checkpoints/
-Anuj/AutoencoderNeuralNetwork/__pycache__/
-Anuj/AutoencoderNeuralNetwork/autoencoder_checkpoints/
-Anuj/AutoencoderNeuralNetwork/classifier_checkpoints/
+__pycache__/
+creditcard.csv
+NeuralNetwork/checkpoints/
+AutoencoderNeuralNetwork/__pycache__/
+AutoencoderNeuralNetwork/logs/
+AutoencoderNeuralNetwork/autoencoder_checkpoints/
+AutoencoderNeuralNetwork/classifier_checkpoints/
