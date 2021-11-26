@@ -191,7 +191,7 @@ if __name__ == '__main__':
     X0,y0 = split(X,y)
     model = NeuralNetwork(X0, y0)
     model.summary()
-    """
+    
     model.train(batch_size=2048, epochs=100, checkpoint_path=checkpoint_path)
     # model.load(checkpoint_dir)
     model.evaluate(batch_size=2048)
@@ -209,4 +209,4 @@ if __name__ == '__main__':
     model3.train(batch_size=2048, epochs=100, checkpoint_path=checkpoint_path)
     # model3.load(checkpoint_dir)
     model3.evaluate(batch_size=2048)
-    """
+    
